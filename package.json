@@ -1,0 +1,21 @@
+{
+  "private": true,
+  "name": "save-cookie-chrome-extension",
+  "type": "module",
+  "scripts": {
+    "eslint-fix": "eslint --fix .",
+    "prettier-fix": "prettier --write .",
+    "update-ewc": "wget -O ./src/common/easyWebComponent.js https://cdn.jsdelivr.net/npm/easy-web-component@0.0.1/index.js",
+    "zip": "rm -rf save-cookie-chrome-extension.zip && git archive --format zip --output save-cookie-chrome-extension.zip master"
+  },
+  "repository": {
+    "type": "git",
+    "url": "TODO"
+  },
+  "devDependencies": {
+    "@eslint/compat": "^1.2.5",
+    "eslint": "^9.18.0",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.4.2"
+  }
+}
