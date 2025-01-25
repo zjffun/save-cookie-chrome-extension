@@ -6,7 +6,7 @@
     "eslint-fix": "eslint --fix .",
     "prettier-fix": "prettier --write .",
     "update-ewc": "wget -O ./src/common/easyWebComponent.js https://cdn.jsdelivr.net/npm/easy-web-component@0.0.1/index.js",
-    "zip": "rm -rf save-cookie-chrome-extension.zip && git archive --format zip --output save-cookie-chrome-extension.zip master"
+    "zip": "rm -rf save-cookie-chrome-extension.zip && git archive --format zip --output save-cookie-chrome-extension.zip main"
   },
   "repository": {
     "type": "git",
