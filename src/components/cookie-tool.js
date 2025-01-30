@@ -1,6 +1,6 @@
 import { BaseHtmlElement } from "../common/BaseElement.js";
 import { cookieService } from "../services/cookie.js";
-import { setCookie } from "../utils.js";
+import { getCurrentTab, getOneLevelDomain, setCookie } from "../utils.js";
 import { actionsStyle } from "./action-button.js";
 import { cardItemName } from "./card-item.js";
 import { showConfirmDialog } from "./confirm-dialog.js";
@@ -23,6 +23,27 @@ async function addCookie() {
   });
 
   await cookieService.insert(item);
+}
+
+async function requestPermission() {
+  try {
+    const currentTab = await getCurrentTab();
+    if (!currentTab) {
+      return;
+    }
+
+    const oneLevelDomain = getOneLevelDomain();
+    const origin = `${new URL(currentTab.url).protocol}//*.${oneLevelDomain}/*`;
+
+    await chrome.permissions.request({
+      origins: [origin],
+    });
+
+    showSuccessMessage("Request permission success");
+  } catch (error) {
+    console.error(error);
+    showSuccessMessage("Request permission failed");
+  }
 }
 
 customElements.define(
@@ -185,6 +206,14 @@ customElements.define(
       );
 
       return [
+        this.el("button", {
+          innerText: "Allow host permission for this site",
+          className: "button",
+          style: "width: 100%",
+          onclick() {
+            requestPermission();
+          },
+        }),
         this.cookieList?.length &&
           this.el(
             "div",

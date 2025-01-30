@@ -13,6 +13,6 @@
     "default_title": "Save Cookie",
     "default_popup": "src/index.html"
   },
-  "permissions": ["cookies", "tabs", "storage"],
-  "host_permissions": ["<all_urls>"]
+  "permissions": ["cookies", "activeTab", "storage"],
+  "optional_host_permissions": ["<all_urls>"]
 }

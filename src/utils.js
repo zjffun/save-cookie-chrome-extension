@@ -34,6 +34,12 @@ export async function getCookies(cookieNames) {
   return result;
 }
 
+export function getOneLevelDomain(url) {
+  const oneLevelDomain = new URL(url).hostname.split(".").slice(-2).join(".");
+
+  return oneLevelDomain;
+}
+
 export async function setCookie({ name, value }) {
   const currentTab = await getCurrentTab();
   if (!currentTab) {
@@ -45,10 +51,7 @@ export async function setCookie({ name, value }) {
   const cookies = await getCookies([name]);
   const originalCookie = cookies[name];
 
-  const oneLevelDomain = new URL(currentUrl).hostname
-    .split(".")
-    .slice(-2)
-    .join(".");
+  const oneLevelDomain = getOneLevelDomain(currentUrl);
 
   const info = {
     name,
