@@ -32,8 +32,10 @@ async function requestPermission() {
       return;
     }
 
-    const oneLevelDomain = getOneLevelDomain();
-    const origin = `${new URL(currentTab.url).protocol}//*.${oneLevelDomain}/*`;
+    const currentUrl = currentTab.url;
+
+    const oneLevelDomain = getOneLevelDomain(currentUrl);
+    const origin = `${new URL(currentUrl).protocol}//*.${oneLevelDomain}/*`;
 
     await chrome.permissions.request({
       origins: [origin],
@@ -42,7 +44,7 @@ async function requestPermission() {
     showSuccessMessage("Request permission success");
   } catch (error) {
     console.error(error);
-    showSuccessMessage("Request permission failed");
+    showErrorMessage("Request permission failed");
   }
 }
 
