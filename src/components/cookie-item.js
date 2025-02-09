@@ -2,7 +2,7 @@ import { BaseHtmlElement } from "../common/BaseElement.js";
 import { cookieService } from "../services/cookie.js";
 import { getCookies, setCookie } from "../utils.js";
 import { copyIconName } from "./copy-icon.js";
-import { showSuccessMessage } from "./message.js";
+import { showErrorMessage, showSuccessMessage } from "./message.js";
 import { showPrompt } from "./prompt.js";
 
 const cookieItemName = "cookie-item";
@@ -45,10 +45,16 @@ customElements.define(
             onclick: async (e) => {
               e.preventDefault();
 
-              await setCookie({
-                name: cookieName,
-                value: value.value,
-              });
+              try {
+                await setCookie({
+                  name: cookieName,
+                  value: value.value,
+                });
+              } catch (error) {
+                console.error(error);
+                showErrorMessage(`Set value failed. ${error}`);
+                return;
+              }
 
               showSuccessMessage(`Set value successfully`);
               this.updateView();
@@ -163,9 +169,16 @@ customElements.define(
               onclick: async (e) => {
                 e.preventDefault();
 
-                const cookieValue = (await getCookies([cookieName]))?.[
-                  cookieName
-                ]?.value;
+                let cookieValue;
+
+                try {
+                  cookieValue = (await getCookies([cookieName]))?.[cookieName]
+                    ?.value;
+                } catch (error) {
+                  console.error(error);
+                  showErrorMessage(`Save value failed. ${error}`);
+                  return;
+                }
 
                 const [result, name] = await showPrompt(
                   "Please enter a name for the saving cookie",

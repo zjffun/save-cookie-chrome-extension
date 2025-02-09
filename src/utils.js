@@ -70,3 +70,23 @@ export async function setCookie({ name, value }) {
 
   return result;
 }
+
+export async function checkHasPermission() {
+  try {
+    const currentTab = await getCurrentTab();
+
+    if (!currentTab) {
+      return;
+    }
+
+    const currentUrl = currentTab.url;
+
+    const result = await chrome.permissions.contains({
+      origins: [`${new URL(currentUrl).origin}/*`],
+    });
+
+    return result;
+  } catch {
+    return false;
+  }
+}

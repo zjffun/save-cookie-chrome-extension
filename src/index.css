@@ -48,4 +48,5 @@ body {
   inset: 0;
   width: fit-content;
   height: fit-content;
+  word-break: break-word;
 }

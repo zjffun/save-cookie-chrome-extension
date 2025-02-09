@@ -1,6 +1,11 @@
 import { BaseHtmlElement } from "../common/BaseElement.js";
 import { cookieService } from "../services/cookie.js";
-import { getCurrentTab, getOneLevelDomain, setCookie } from "../utils.js";
+import {
+  checkHasPermission,
+  getCurrentTab,
+  getOneLevelDomain,
+  setCookie,
+} from "../utils.js";
 import { actionsStyle } from "./action-button.js";
 import { cardItemName } from "./card-item.js";
 import { showConfirmDialog } from "./confirm-dialog.js";
@@ -42,6 +47,7 @@ async function requestPermission() {
     });
 
     showSuccessMessage("Request permission success");
+    return true;
   } catch (error) {
     console.error(error);
     showErrorMessage("Request permission failed");
@@ -52,10 +58,25 @@ customElements.define(
   cookieToolName,
   class CookieTool extends BaseHtmlElement {
     cookieList = [];
+    hasPermisssion;
+
+    async checkPermission() {
+      this.hasPermisssion = await checkHasPermission();
+    }
 
     async updateCookieList() {
       this.cookieList = await cookieService.getList();
       this.updateView();
+    }
+
+    async init() {
+      try {
+        await this.checkPermission();
+      } catch (error) {
+        console.error(error);
+      }
+
+      await this.updateCookieList();
     }
 
     constructor() {
@@ -65,7 +86,7 @@ customElements.define(
         await this.updateCookieList();
       });
 
-      this.updateCookieList();
+      this.init();
     }
 
     getCookieItem({ cookie, i, length }) {
@@ -208,14 +229,22 @@ customElements.define(
       );
 
       return [
-        this.el("button", {
-          innerText: "Allow host permission for this site",
-          className: "button",
-          style: "width: 100%",
-          onclick() {
-            requestPermission();
-          },
-        }),
+        this.hasPermisssion !== true &&
+          this.el("button", {
+            key: "request-permission",
+            innerText: "Allow host permission for this site",
+            className: "button",
+            style: "width: 100%",
+            onclick: () => {
+              (async () => {
+                const result = await requestPermission();
+                if (result) {
+                  await this.checkPermission();
+                }
+              })();
+            },
+          }),
+
         this.cookieList?.length &&
           this.el(
             "div",
